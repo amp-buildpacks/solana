@@ -46,7 +46,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency resolver\n%w", err)
 	}
 
-	// install hardhat
+	// install rustup/rustc
 	nodeDependency, err := dr.Resolve("node", "")
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)

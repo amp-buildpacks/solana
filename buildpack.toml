@@ -15,40 +15,40 @@
 api = "0.8"
 
 [buildpack]
-  description = "A Cloud Native Buildpack that provides the Hardhat Tool Suite"
+  name = "Paketo Buildpack for sonala"
+  id = "jjeejj/buildpack-sonala"
+  version = "0.1.0"
+  description = "A Cloud Native Buildpack that provides the Sonala Tool Suite"
   homepage = "https://github.com/jjeejj/buildpack-sonala"
-  id = "amp-buildpacks/hardhat"
   keywords = ["sonala", "buildpack"]
   sbom-formats = ["application/vnd.cyclonedx+json", "application/vnd.syft+json"]
-  name = "Paketo Buildpack for sonala"
-  version = "0.1.0"
 
-  [[buildpack.licenses]]
-    type = "Apache-2.0"
-    uri = "https://github.com/amp-buildpacks/hardhat/blob/main/LICENSE"
+[[buildpack.licenses]]
+  type = "Apache-2.0"
+  uri = "https://github.com/jjeejj/Buildpack-solana/blob/main/LICENSE"
 
 [metadata]
   include-files = ["LICENSE", "README.md", "bin/build", "bin/detect", "bin/main", "buildpack.toml"]
   pre-package = "scripts/build.sh"
 
-  [[metadata.configurations]]
-    build = true
-    default = "false"
-    description = "enable the Hardhat run process"
-    name = "BP_ENABLE_HARDHAT_PROCESS"
+[[metadata.configurations]]
+  build = true
+  default = "false"
+  description = "enable the sonala run process"
+  name = "BP_ENABLE_HARDHAT_PROCESS"
 
   # from https://github.com/paketo-buildpacks/node-engine/blob/main/buildpack.toml
-  [[metadata.dependencies]]
-    deprecation_date = "2026-04-30T00:00:00Z"
-    id = "node"
-    name = "Node Engine"
-    purl = "pkg:generic/node@v20.10.0"
-    sha256 = "3fe4ec5d70c8b4ffc1461dec83ab23fc70124e137c4cbbe1ccc9d6ae6ec04a7d"
-    uri = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz"
-    strip-components = 1
-    stacks = ["*"]
-    version = "20.10.0"
-    licenses = ["0BSD", "Apache-2.0", "Artistic-2.0", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause", "BSD-Source-Code", "CC0-1.0", "ECL-2.0", "ICU", "MIT", "MIT-0", "SHL-0.5", "SHL-0.51", "Unicode-TOU"]
+[[metadata.dependencies]]
+  deprecation_date = "2026-04-30T00:00:00Z"
+  id = ""
+  name = "Node Engine"
+  purl = "pkg:generic/node@v20.10.0"
+  sha256 = "3fe4ec5d70c8b4ffc1461dec83ab23fc70124e137c4cbbe1ccc9d6ae6ec04a7d"
+  uri = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz"
+  strip-components = 1
+  stacks = ["*"]
+  version = "20.10.0"
+  licenses = ["0BSD", "Apache-2.0", "Artistic-2.0", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause", "BSD-Source-Code", "CC0-1.0", "ECL-2.0", "ICU", "MIT", "MIT-0", "SHL-0.5", "SHL-0.51", "Unicode-TOU"]
 
 [[stacks]]
   id = "*"

@@ -30,7 +30,7 @@ type Detect struct {
 }
 
 func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
-	found, err := d.hardhatProject(context.Application.Path)
+	found, err := d.solanaProject(context.Application.Path)
 	if err != nil {
 		return libcnb.DetectResult{Pass: false}, fmt.Errorf("unable to detect hardhat requirements\n%w", err)
 	}
@@ -54,14 +54,14 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 	}, nil
 }
 
-func (d Detect) hardhatProject(appDir string) (bool, error) {
-	_, err := os.Stat(filepath.Join(appDir, "package.json"))
+func (d Detect) solanaProject(appDir string) (bool, error) {
+	_, err := os.Stat(filepath.Join(appDir, "Cargo.toml"))
 	if os.IsNotExist(err) || err != nil {
-		return false, fmt.Errorf("unable to determine if package.json exists\n%w", err)
+		return false, fmt.Errorf("unable to determine if Cargo.toml exists\n%w", err)
 	}
 
-	buildDirectory := filepath.Join(appDir, ".")
-	extension := ".sol"
+	buildDirectory := filepath.Join(appDir, "src")
+	extension := ".rs"
 	if err := existsFilesWithExtension(buildDirectory, extension); err != nil {
 		return false, fmt.Errorf("unable to determine if '%s' exists\n%w", extension, err)
 	}
