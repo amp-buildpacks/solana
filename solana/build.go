@@ -52,7 +52,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
 	}
 
-	hardhatLayer := NewHardhat(nodeDependency, dc)
+	hardhatLayer := NewSolana(nodeDependency, dc)
 	hardhatLayer.Logger = b.Logger
 
 	enableProcess, _ := cr.Resolve("BP_ENABLE_HARDHAT_PROCESS")

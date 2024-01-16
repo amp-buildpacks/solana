@@ -29,25 +29,25 @@ import (
 	"github.com/paketo-buildpacks/libpak/sherpa"
 )
 
-type Hardhat struct {
+type Solana struct {
 	LayerContributor libpak.DependencyLayerContributor
 	Logger           bard.Logger
 	Executor         effect.Executor
 }
 
-func NewHardhat(dependency libpak.BuildpackDependency, cache libpak.DependencyCache) Hardhat {
+func NewSolana(dependency libpak.BuildpackDependency, cache libpak.DependencyCache) Solana {
 	contributor := libpak.NewDependencyLayerContributor(dependency, cache, libcnb.LayerTypes{
 		Build:  true,
 		Cache:  true,
 		Launch: true,
 	})
-	return Hardhat{
+	return Solana{
 		LayerContributor: contributor,
 		Executor:         effect.NewExecutor(),
 	}
 }
 
-func (r Hardhat) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
+func (r Solana) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	r.LayerContributor.Logger = r.Logger
 	return r.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
 		bin := filepath.Join(layer.Path, "bin")
@@ -85,7 +85,7 @@ func (r Hardhat) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	})
 }
 
-func (r Hardhat) Execute(command string, args []string) (*bytes.Buffer, error) {
+func (r Solana) Execute(command string, args []string) (*bytes.Buffer, error) {
 	buf := &bytes.Buffer{}
 	if err := r.Executor.Execute(effect.Execution{
 		Command: command,
@@ -98,7 +98,7 @@ func (r Hardhat) Execute(command string, args []string) (*bytes.Buffer, error) {
 	return buf, nil
 }
 
-func (r Hardhat) BuildProcessTypes(enableProcess string) ([]libcnb.Process, error) {
+func (r Solana) BuildProcessTypes(enableProcess string) ([]libcnb.Process, error) {
 	processes := []libcnb.Process{}
 
 	if enableProcess == "true" {
@@ -112,6 +112,6 @@ func (r Hardhat) BuildProcessTypes(enableProcess string) ([]libcnb.Process, erro
 	return processes, nil
 }
 
-func (r Hardhat) Name() string {
+func (r Solana) Name() string {
 	return r.LayerContributor.LayerName()
 }

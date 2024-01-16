@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	PlanEntryHardhat = "solana"
+	PlanEntrySolana = "solana"
 )
 
 type Detect struct {
@@ -44,10 +44,10 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 		Plans: []libcnb.BuildPlan{
 			{
 				Provides: []libcnb.BuildPlanProvide{
-					{Name: PlanEntryHardhat},
+					{Name: PlanEntrySolana},
 				},
 				Requires: []libcnb.BuildPlanRequire{
-					{Name: PlanEntryHardhat},
+					{Name: PlanEntrySolana},
 				},
 			},
 		},

@@ -1,0 +1,54 @@
+# Copyright (c) The Amphitheatre Authors. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+api = "0.8"
+
+[buildpack]
+  description = "A Cloud Native Buildpack that provides the Hardhat Tool Suite"
+  homepage = "https://github.com/jjeejj/buildpack-sonala"
+  id = "amp-buildpacks/hardhat"
+  keywords = ["sonala", "buildpack"]
+  sbom-formats = ["application/vnd.cyclonedx+json", "application/vnd.syft+json"]
+  name = "Paketo Buildpack for sonala"
+  version = "0.1.0"
+
+  [[buildpack.licenses]]
+    type = "Apache-2.0"
+    uri = "https://github.com/amp-buildpacks/hardhat/blob/main/LICENSE"
+
+[metadata]
+  include-files = ["LICENSE", "README.md", "bin/build", "bin/detect", "bin/main", "buildpack.toml"]
+  pre-package = "scripts/build.sh"
+
+  [[metadata.configurations]]
+    build = true
+    default = "false"
+    description = "enable the Hardhat run process"
+    name = "BP_ENABLE_HARDHAT_PROCESS"
+
+  # from https://github.com/paketo-buildpacks/node-engine/blob/main/buildpack.toml
+  [[metadata.dependencies]]
+    deprecation_date = "2026-04-30T00:00:00Z"
+    id = "node"
+    name = "Node Engine"
+    purl = "pkg:generic/node@v20.10.0"
+    sha256 = "3fe4ec5d70c8b4ffc1461dec83ab23fc70124e137c4cbbe1ccc9d6ae6ec04a7d"
+    uri = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz"
+    strip-components = 1
+    stacks = ["*"]
+    version = "20.10.0"
+    licenses = ["0BSD", "Apache-2.0", "Artistic-2.0", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause", "BSD-Source-Code", "CC0-1.0", "ECL-2.0", "ICU", "MIT", "MIT-0", "SHL-0.5", "SHL-0.51", "Unicode-TOU"]
+
+[[stacks]]
+  id = "*"
