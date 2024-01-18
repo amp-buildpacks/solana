@@ -2,9 +2,15 @@
 
 A Cloud Native Buildpack that provides the Solana Tool Suite
 
+## Usage
 
+## Contributing
 
-
+If anything feels off, or if you feel that some functionality is missing, please
+check out the [contributing
+page](https://docs.amphitheatre.app/contributing/). There you will find
+instructions for sharing your feedback, building the tool locally, and
+submitting pull requests to the project.
 
 ## License
 

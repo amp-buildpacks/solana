@@ -20,7 +20,7 @@ import (
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libpak/bard"
 
-	"github.com/jjeejj/Buildpack-solana/solana"
+	"github.com/amp-buildpacks/solana/solana"
 )
 
 func main() {

@@ -24,40 +24,7 @@ type Build struct {
 }
 
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
-	// b.Logger.Title(context.Buildpack)
+	b.Logger.Title(context.Buildpack)
 	result := libcnb.NewBuildResult()
-	//
-	// cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)
-	// if err != nil {
-	// 	return libcnb.BuildResult{}, fmt.Errorf("unable to create configuration resolver\n%w", err)
-	// }
-	//
-	// dc, err := libpak.NewDependencyCache(context)
-	// if err != nil {
-	// 	return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency cache\n%w", err)
-	// }
-	// dc.Logger = b.Logger
-	//
-	// dr, err := libpak.NewDependencyResolver(context)
-	// if err != nil {
-	// 	return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency resolver\n%w", err)
-	// }
-
-	// // install rustup/rustc
-	// nodeDependency, err := dr.Resolve("node", "")
-	// if err != nil {
-	// 	return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
-	// }
-	//
-	// hardhatLayer := NewSolana(nodeDependency, dc)
-	// hardhatLayer.Logger = b.Logger
-	//
-	// enableProcess, _ := cr.Resolve("BP_ENABLE_HARDHAT_PROCESS")
-	// result.Processes, err = hardhatLayer.BuildProcessTypes(enableProcess)
-	// if err != nil {
-	// 	return libcnb.BuildResult{}, fmt.Errorf("unable to build list of process types\n%w", err)
-	// }
-	// result.Layers = append(result.Layers, hardhatLayer)
-
 	return result, nil
 }

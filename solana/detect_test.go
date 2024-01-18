@@ -56,36 +56,34 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 			Expect(plan).To(Equal(libcnb.DetectResult{}))
 		})
 
-		it("missing Cargo.lock", func() {
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "Cargo.toml"), []byte{}, 0644))
+		it("missing src/lib.rs", func() {
+			Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "src/lib.rs"), []byte{}, 0644))
 
 			plan, err := detect.Detect(ctx)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(plan).To(Equal(libcnb.DetectResult{}))
 		})
 
-		it("missing both Cargo.toml and Cargo.lock", func() {
+		it("missing both Cargo.toml and src/lib.rs", func() {
 			plan, err := detect.Detect(ctx)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(plan).To(Equal(libcnb.DetectResult{}))
 		})
 	})
 
-	it("passes with both Cargo.toml and Cargo.lock", func() {
+	it("passes with both Cargo.toml and src/lib.rs", func() {
 		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "Cargo.toml"), []byte{}, 0644))
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "Cargo.lock"), []byte{}, 0644))
+		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "src/lib.rs"), []byte{}, 0644))
 
 		Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
 			Pass: true,
 			Plans: []libcnb.BuildPlan{
 				{
 					Provides: []libcnb.BuildPlanProvide{
-						{Name: "rust-cargo"},
+						{Name: PlanEntrySolana},
 					},
 					Requires: []libcnb.BuildPlanRequire{
-						{Name: "syft"},
-						{Name: "rust-cargo"},
-						{Name: "rust"},
+						{Name: PlanEntrySolana},
 					},
 				},
 			},

@@ -16,7 +16,7 @@
 set -euo pipefail
 
 
-GOOS="linux" go build -ldflags='-s -w' -o bin/main github.com/jjeejj/Buildpack-solana/cmd
+GOOS="linux" go build -ldflags='-s -w' -o bin/main github.com/amp-buildpacks/solana/cmd/main
 
 if [ "${STRIP:-false}" != "false" ]; then
   strip bin/main

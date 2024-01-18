@@ -25,9 +25,7 @@ import (
 
 func TestUnitRustCargo(t *testing.T) {
 	suite := spec.New("Solana", spec.Report(report.Terminal{}))
-	// suite("Build", testBuild)
 	suite("Detect", testDetect)
-	// suite("Cargo", testCargo)
-	// suite("Cache", testCache)
+	suite("Build", testBuild)
 	suite.Run(t)
 }

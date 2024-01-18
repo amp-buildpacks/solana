@@ -24,3 +24,7 @@ go.work
 
 # ide
 .idea
+
+# .githut
+!.github/pipeline-descriptor.yml
+!.github/pipeline-version
