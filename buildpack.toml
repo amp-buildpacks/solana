@@ -15,7 +15,7 @@
 api = "0.8"
 
 [buildpack]
-  name = "Paketo Buildpack for Solana"
+  name = "AMP Buildpack for solana"
   id = "amp-buildpacks/solana"
   version = "0.1.0"
   description = "A Cloud Native Buildpack that provides the Solana Tool Suite"
