@@ -15,17 +15,17 @@
 api = "0.8"
 
 [buildpack]
-  name = "Paketo Buildpack for sonala"
-  id = "amp-buildpacks/sonala"
+  name = "Paketo Buildpack for Solana"
+  id = "amp-buildpacks/solana"
   version = "0.1.0"
-  description = "A Cloud Native Buildpack that provides the Sonala Tool Suite"
-  homepage = "https://github.com/amp-buildpacks/sonala"
-  keywords = ["sonala", "buildpack"]
+  description = "A Cloud Native Buildpack that provides the Solana Tool Suite"
+  homepage = "https://github.com/amp-buildpacks/solana"
+  keywords = ["solana", "buildpack"]
   sbom-formats = ["application/vnd.cyclonedx+json", "application/vnd.syft+json"]
 
 [[buildpack.licenses]]
   type = "Apache-2.0"
-  uri = "https://github.com/amp-buildpacks/sonala/blob/main/LICENSE"
+  uri = "https://github.com/amp-buildpacks/solana/blob/main/LICENSE"
 
 [metadata]
   include-files = ["LICENSE", "README.md", "bin/build", "bin/detect", "bin/main", "buildpack.toml"]

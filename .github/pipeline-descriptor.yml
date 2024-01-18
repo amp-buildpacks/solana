@@ -3,7 +3,7 @@ github:
   token:    ${{ secrets.AMP_BUILDPACKS_BOT_GITHUB_TOKEN }}
 
 package:
-  repositories:   ["ghcr.io/amp-buildpacks/sonala"]
+  repositories:   ["ghcr.io/amp-buildpacks/solana"]
   register:       false
   registry_token: ${{ secrets.AMP_BUILDPACKS_BOT_GITHUB_TOKEN }}
 
