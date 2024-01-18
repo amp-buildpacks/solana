@@ -56,35 +56,17 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 
 func (d Detect) solanaProject(appDir string) (bool, error) {
 	_, err := os.Stat(filepath.Join(appDir, "Cargo.toml"))
-	if os.IsNotExist(err) || err != nil {
+	if os.IsNotExist(err) {
+		return false, nil
+	} else if err != nil {
 		return false, fmt.Errorf("unable to determine if Cargo.toml exists\n%w", err)
 	}
 
-	buildDirectory := filepath.Join(appDir, "src")
-	extension := ".rs"
-	if err := existsFilesWithExtension(buildDirectory, extension); err != nil {
-		return false, fmt.Errorf("unable to determine if '%s' exists\n%w", extension, err)
+	_, err = os.Stat(filepath.Join(appDir, "Cargo.lock"))
+	if os.IsNotExist(err) {
+		return false, nil
+	} else if err != nil {
+		return false, fmt.Errorf("unable to determine if Cargo.lock exists\n%w", err)
 	}
 	return true, nil
-}
-
-func existsFilesWithExtension(directory, extension string) error {
-	var found bool
-	err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		// Check if the file has the specified extension.
-		if !info.IsDir() && filepath.Ext(path) == extension {
-			found = true
-			return nil
-		}
-		return nil
-	})
-
-	if !found {
-		return fmt.Errorf("no files with extension '%s' found", extension)
-	}
-	return err
 }
