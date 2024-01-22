@@ -17,7 +17,6 @@
 package solana
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -39,7 +38,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 
-		ctx.Application.Path, err = ioutil.TempDir("", "cargo")
+		ctx.Application.Path, err = os.MkdirTemp("", "solana")
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -47,33 +46,32 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.RemoveAll(ctx.Application.Path)).To(Succeed())
 	})
 
-	context("missing required files", func() {
+	context("missing requires file", func() {
 		it("missing Cargo.toml", func() {
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "Cargo.lock"), []byte{}, 0644))
+			Expect(os.Mkdir(filepath.Join(ctx.Application.Path, "src"), 0755)).ToNot(HaveOccurred())
+			Expect(os.WriteFile(filepath.Join(ctx.Application.Path, "src/lib.rs"), []byte{}, 0644)).ToNot(HaveOccurred())
 
 			plan, err := detect.Detect(ctx)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(plan).To(Equal(libcnb.DetectResult{}))
+			Expect(err).To(MatchError(ErrCargoFileNotFound))
+			Expect(plan).To(Equal(libcnb.DetectResult{
+				Pass: false,
+			}))
 		})
 
-		it("missing src/lib.rs", func() {
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "src/lib.rs"), []byte{}, 0644))
-
+		it("missing src/lib.rs file", func() {
+			Expect(os.WriteFile(filepath.Join(ctx.Application.Path, "Cargo.toml"), []byte{}, 0644)).ToNot(HaveOccurred())
 			plan, err := detect.Detect(ctx)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(plan).To(Equal(libcnb.DetectResult{}))
-		})
-
-		it("missing both Cargo.toml and src/lib.rs", func() {
-			plan, err := detect.Detect(ctx)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(plan).To(Equal(libcnb.DetectResult{}))
+			Expect(err).To(MatchError(ErrSrcLibFileNotFound))
+			Expect(plan).To(Equal(libcnb.DetectResult{
+				Pass: false,
+			}))
 		})
 	})
 
 	it("passes with both Cargo.toml and src/lib.rs", func() {
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "Cargo.toml"), []byte{}, 0644))
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "src/lib.rs"), []byte{}, 0644))
+		Expect(os.WriteFile(filepath.Join(ctx.Application.Path, "Cargo.toml"), []byte{}, 0644)).ToNot(HaveOccurred())
+		Expect(os.Mkdir(filepath.Join(ctx.Application.Path, "src"), 0755)).ToNot(HaveOccurred())
+		Expect(os.WriteFile(filepath.Join(ctx.Application.Path, "src/lib.rs"), []byte{}, 0644)).ToNot(HaveOccurred())
 
 		Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
 			Pass: true,

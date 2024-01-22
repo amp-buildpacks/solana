@@ -33,7 +33,7 @@ api = "0.8"
 
 
 [[metadata.dependencies]]
-  id = ""
+  id = "solana-cli"
   name = "Solana Cli"
   purl = ""
   sha256 = ""
