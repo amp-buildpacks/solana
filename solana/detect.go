@@ -15,15 +15,19 @@
 package solana
 
 import (
-	"fmt"
+	"errors"
 	"os"
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
 )
 
-const (
-	PlanEntrySolana = "solana"
+var (
+	PlanEntrySolana                = "solana"
+	ErrCargoFileNotFound           = errors.New("cargo.toml file not found")
+	ErrUnableToDetermineCargoFile  = errors.New("unable to determine if Cargo.toml exists")
+	ErrSrcLibFileNotFound          = errors.New("src/lib.rs file not found")
+	ErrUnableToDetermineSrcLibFile = errors.New("unable to determine if src/lib.rs exists")
 )
 
 type Detect struct {
@@ -32,7 +36,7 @@ type Detect struct {
 func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
 	found, err := d.solanaProject(context.Application.Path)
 	if err != nil {
-		return libcnb.DetectResult{Pass: false}, fmt.Errorf("unable to detect solana requirements\n%w", err)
+		return libcnb.DetectResult{Pass: false}, err
 	}
 
 	if !found {
@@ -58,16 +62,16 @@ func (d Detect) solanaProject(appDir string) (bool, error) {
 	// check Cargo.toml file is exists
 	_, err := os.Stat(filepath.Join(appDir, "Cargo.toml"))
 	if os.IsNotExist(err) {
-		return false, nil
+		return false, ErrCargoFileNotFound
 	} else if err != nil {
-		return false, fmt.Errorf("unable to determine if Cargo.toml exists\n%w", err)
+		return false, ErrUnableToDetermineCargoFile
 	}
 	// check src/lib.ts file is exists
 	_, err = os.Stat(filepath.Join(appDir, "src/lib.rs"))
 	if os.IsNotExist(err) {
-		return false, nil
+		return false, ErrSrcLibFileNotFound
 	} else if err != nil {
-		return false, fmt.Errorf("unable to determine if src/lib.rs exists\n%w", err)
+		return false, ErrUnableToDetermineSrcLibFile
 	}
 	return true, nil
 }
