@@ -18,11 +18,15 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
+	"github.com/paketo-buildpacks/libpak/crush"
 	"github.com/paketo-buildpacks/libpak/effect"
+	"github.com/paketo-buildpacks/libpak/sherpa"
 )
 
 type Solana struct {
@@ -46,6 +50,25 @@ func NewSolana(dependency libpak.BuildpackDependency, cache libpak.DependencyCac
 func (r Solana) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	r.LayerContributor.Logger = r.Logger
 	return r.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
+		bin := filepath.Join(layer.Path, "bin")
+
+		r.Logger.Bodyf("Expanding %s to %s", artifact.Name(), bin)
+		if err := crush.Extract(artifact, layer.Path, 1); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to expand %s\n%w", artifact.Name(), err)
+		}
+
+		r.Logger.Bodyf("Setting %s in PATH", bin)
+		if err := os.Setenv("PATH", sherpa.AppendToEnvVar("PATH", ":", bin)); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to set $PATH\n%w", err)
+		}
+
+		// get hardhat version
+		buf, err := r.Execute("solana", []string{"--version"})
+		if err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to get solana-cli version\n%w", err)
+		}
+		version := strings.TrimSpace(buf.String())
+		r.Logger.Bodyf("Checking solana-cli version: %s", version)
 		return layer, nil
 	})
 }
@@ -65,6 +88,19 @@ func (r Solana) Execute(command string, args []string) (*bytes.Buffer, error) {
 
 func (r Solana) BuildProcessTypes(enableProcess string) ([]libcnb.Process, error) {
 	var processes []libcnb.Process
+	if enableProcess == "true" {
+		processes = append(processes, libcnb.Process{
+			Type:      "cli",
+			Command:   "cargo-build-bpf",
+			Arguments: []string{},
+			Default:   true,
+		}, libcnb.Process{
+			Type:      "cli",
+			Command:   "solana ",
+			Arguments: []string{"program", "deploy", "./target/deploy/*.so"},
+			Default:   true,
+		})
+	}
 	return processes, nil
 }
 
