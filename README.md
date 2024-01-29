@@ -4,6 +4,34 @@ A Cloud Native Buildpack that provides the Solana Tool Suite
 
 ## Usage
 
+### 1. To use this buildpack, simply run:
+
+```shell
+pack build <image-name> \
+    --path <solana-samples-path> \
+    --buildpack ghcr.io/amp-buildpacks/solana
+```
+
+For example:
+
+```shell
+pack build solana-sample \
+    --path ./samples/solana \
+    --buildpack ghcr.io/amp-buildpacks/solana
+```
+
+### 2. To run the image, simply run:
+
+```shell
+docker run -it <image-name>
+```
+
+For example:
+
+```shell
+docker run -it solana-sample
+```
+
 ## Contributing
 
 If anything feels off, or if you feel that some functionality is missing, please

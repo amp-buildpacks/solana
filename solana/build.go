@@ -15,7 +15,10 @@
 package solana
 
 import (
+	"fmt"
+
 	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 )
 
@@ -26,5 +29,37 @@ type Build struct {
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	b.Logger.Title(context.Buildpack)
 	result := libcnb.NewBuildResult()
+	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)
+	if err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create configuration resolver\n%w", err)
+	}
+	dc, err := libpak.NewDependencyCache(context)
+	if err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency cache, err: %v\n", err)
+	}
+	dc.Logger = b.Logger
+
+	dr, err := libpak.NewDependencyResolver(context)
+	if err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency resolver, err: %v\n", err)
+	}
+	// check solana cli version config
+	v, _ := cr.Resolve("BP_SOLANA_ClI_VERSION")
+	if err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to find solana %s dependency, err:%v\n", v, err)
+	}
+
+	solanaDependency, err := dr.Resolve("solana-cli", v)
+	solanaLayer := NewSolana(solanaDependency, dc, cr)
+	solanaLayer.Logger = b.Logger
+
+	deploySolanaContract, _ := cr.Resolve("BP_DEPLOY_SOLANA_CONTRACT")
+	result.Processes, err = solanaLayer.BuildProcessTypes(deploySolanaContract)
+
+	if err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to build list of process types\n%w", err)
+	}
+	result.Layers = append(result.Layers, solanaLayer)
+
 	return result, nil
 }
