@@ -35,20 +35,21 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	}
 	dc, err := libpak.NewDependencyCache(context)
 	if err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency cache\n%w", err)
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency cache, err: %v\n", err)
 	}
 	dc.Logger = b.Logger
 
 	dr, err := libpak.NewDependencyResolver(context)
 	if err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency resolver\n%w", err)
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency resolver, err: %v\n", err)
 	}
 	// install solana cli
-	solanaDependency, err := dr.Resolve("solana-cli", "1.17.17")
+	v, _ := cr.Resolve("BP_SOLANA_ClI_VERSION")
+	solanaDependency, err := dr.Resolve("solana-cli", v)
 	if err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to find solana 1.17.17 dependency\n%w", err)
+		return libcnb.BuildResult{}, fmt.Errorf("unable to find solana 1.17.17 dependency, err:%v\n", err)
 	}
-	solanaLayer := NewSolana(solanaDependency, dc)
+	solanaLayer := NewSolana(solanaDependency, dc, cr)
 	solanaLayer.Logger = b.Logger
 
 	deploySolanaContract, _ := cr.Resolve("BP_DEPLOY_SOLANA_CONTRACT")

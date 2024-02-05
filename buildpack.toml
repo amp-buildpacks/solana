@@ -32,12 +32,23 @@ api = "0.8"
   pre-package = "scripts/build.sh"
 
 
-
 [[metadata.configurations]]
   build = true
   default = "true"
   description = "enable the deploy solana contract process"
   name = "BP_DEPLOY_SOLANA_CONTRACT"
+
+[[metadata.configurations]]
+  build = true
+  default = "devnet"
+  description = "Configure the network for Solana deploy"
+  name = "BP_APTOS_SOLANA_NETWORK"
+
+[[metadata.configurations]]
+  build = true
+  default = "1.17.17"
+  description = "The Solana Cli version"
+  name = "BP_SOLANA_ClI_VERSION"
 
 [[metadata.dependencies]]
   id = "solana-cli"

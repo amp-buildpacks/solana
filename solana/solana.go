@@ -31,11 +31,12 @@ import (
 
 type Solana struct {
 	LayerContributor libpak.DependencyLayerContributor
+	configResolver   libpak.ConfigurationResolver
 	Logger           bard.Logger
 	Executor         effect.Executor
 }
 
-func NewSolana(dependency libpak.BuildpackDependency, cache libpak.DependencyCache) Solana {
+func NewSolana(dependency libpak.BuildpackDependency, cache libpak.DependencyCache, configResolver libpak.ConfigurationResolver) Solana {
 	contributor := libpak.NewDependencyLayerContributor(dependency, cache, libcnb.LayerTypes{
 		Build:  true,
 		Cache:  true,
@@ -44,6 +45,7 @@ func NewSolana(dependency libpak.BuildpackDependency, cache libpak.DependencyCac
 	return Solana{
 		LayerContributor: contributor,
 		Executor:         effect.NewExecutor(),
+		configResolver:   configResolver,
 	}
 }
 
@@ -62,13 +64,22 @@ func (r Solana) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to set $PATH\n%w", err)
 		}
 
-		// get hardhat version
+		// get solana version
 		buf, err := r.Execute("solana", []string{"--version"})
 		if err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to get solana-cli version\n%w", err)
+			return libcnb.Layer{}, fmt.Errorf("unable to get solana version\n%w", err)
 		}
 		version := strings.TrimSpace(buf.String())
 		r.Logger.Bodyf("Checking solana-cli version: %s", version)
+
+		// compile contract
+		var args []string
+		r.Logger.Bodyf("Compiling contracts")
+		if _, err := r.Execute("cargo-build-bpf", args); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to compile contract\n%w", err)
+		}
+		// deploy contract
+
 		return layer, nil
 	})
 }
@@ -98,7 +109,7 @@ func (r Solana) BuildProcessTypes(enableProcess string) ([]libcnb.Process, error
 			Type:      "cli",
 			Command:   "solana ",
 			Arguments: []string{"program", "deploy", "./target/deploy/*.so"},
-			Default:   true,
+			Default:   false,
 		})
 	}
 	return processes, nil
