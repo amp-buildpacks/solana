@@ -43,12 +43,13 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to create dependency resolver, err: %v\n", err)
 	}
-	// install solana cli
+	// check solana cli version config
 	v, _ := cr.Resolve("BP_SOLANA_ClI_VERSION")
-	solanaDependency, err := dr.Resolve("solana-cli", v)
 	if err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to find solana 1.17.17 dependency, err:%v\n", err)
+		return libcnb.BuildResult{}, fmt.Errorf("unable to find solana %s dependency, err:%v\n", v, err)
 	}
+
+	solanaDependency, err := dr.Resolve("solana-cli", v)
 	solanaLayer := NewSolana(solanaDependency, dc, cr)
 	solanaLayer.Logger = b.Logger
 

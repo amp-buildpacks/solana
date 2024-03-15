@@ -34,6 +34,8 @@ type Solana struct {
 	configResolver   libpak.ConfigurationResolver
 	Logger           bard.Logger
 	Executor         effect.Executor
+	EndPoint         string
+	WalletAddress    string
 }
 
 func NewSolana(dependency libpak.BuildpackDependency, cache libpak.DependencyCache, configResolver libpak.ConfigurationResolver) Solana {
@@ -78,11 +80,42 @@ func (r Solana) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		if _, err := r.Execute("cargo-build-bpf", args); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to compile contract\n%w", err)
 		}
-		// deploy contract
+		// 1. config deploy endpoint
+		if _, err := r.InitializeEnv(); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to initialize solana endpoint\n%w", err)
+		}
+		// 2. import wallet and valid wallet
 
 		return layer, nil
 	})
 }
+
+// InitializeEnv config deploy endpoint
+func (r Solana) InitializeEnv() (*bytes.Buffer, error) {
+	r.Logger.Bodyf("Initializing solana endpoint")
+	deployNet, ok := r.configResolver.Resolve("BP_SOLANA_DEPLOY_NETWORK")
+	if !ok {
+		return nil, fmt.Errorf("unable to resolve deploy network")
+	}
+	// get endpoint config
+	deployEndPoint, ok := r.configResolver.Resolve(fmt.Sprintf("BP_%s_ENDPOINT", strings.ToUpper(deployNet)))
+	if !ok {
+		return nil, fmt.Errorf("unable to resolve deploy deploy endpoint")
+	}
+	r.EndPoint = deployEndPoint
+	args := []string{
+		"config",
+		"set",
+		"--url",
+		deployEndPoint,
+	}
+	return r.Execute(PlanEntrySolana, args)
+}
+
+// ImportWalletAndValid
+// func (s Solana) ImportWalletAndValid() error {
+//
+// }
 
 func (r Solana) Execute(command string, args []string) (*bytes.Buffer, error) {
 	buf := &bytes.Buffer{}
@@ -100,15 +133,11 @@ func (r Solana) Execute(command string, args []string) (*bytes.Buffer, error) {
 func (r Solana) BuildProcessTypes(enableProcess string) ([]libcnb.Process, error) {
 	var processes []libcnb.Process
 	if enableProcess == "true" {
+		r.Logger.Bodyf(" solana deploy  %s for %s endpoint", r.WalletAddress, r.WalletAddress)
 		processes = append(processes, libcnb.Process{
 			Type:      "cli",
-			Command:   "cargo-build-bpf",
-			Arguments: []string{},
-			Default:   true,
-		}, libcnb.Process{
-			Type:      "cli",
 			Command:   "solana ",
-			Arguments: []string{"program", "deploy", "./target/deploy/*.so"},
+			Arguments: []string{PlanEntrySolana, "deploy", "./target/deploy/*.so"},
 			Default:   false,
 		})
 	}
