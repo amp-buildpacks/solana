@@ -174,7 +174,7 @@ func (r Solana) BuildProcessTypes(enableProcess string) ([]libcnb.Process, error
 			Type:      "cli",
 			Command:   "solana ",
 			Arguments: []string{PlanEntrySolana, "deploy", "./target/deploy/*.so"},
-			Default:   false,
+			Default:   true,
 		})
 	}
 	return processes, nil
