@@ -85,7 +85,9 @@ func (r Solana) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to initialize solana endpoint\n%w", err)
 		}
 		// 2. import wallet and valid wallet
-
+		if err = r.ImportWalletAndValid(); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("import wallet and valid fail\n%w", err)
+		}
 		return layer, nil
 	})
 }
@@ -112,10 +114,44 @@ func (r Solana) InitializeEnv() (*bytes.Buffer, error) {
 	return r.Execute(PlanEntrySolana, args)
 }
 
-// ImportWalletAndValid
-// func (s Solana) ImportWalletAndValid() error {
-//
-// }
+// ImportWalletAndValid write to id.json and valid
+func (s Solana) ImportWalletAndValid() error {
+	keyPair, ok := s.configResolver.Resolve("BP_WALLET_KEYPAIR")
+	if !ok {
+		return fmt.Errorf("resolve BP_WALLET_KEYPAIR err")
+	}
+	keyPairPath := "/tmp/id.json"
+	// write to /tmp/id.json
+	err := os.WriteFile(keyPairPath, []byte(keyPair), 0644)
+	if err != nil {
+		s.Logger.Logger.Infof("write id.json err", err)
+		return err
+	}
+	// update config keypair
+	args := []string{
+		"config",
+		"set",
+		"--keypair",
+		keyPairPath,
+	}
+	_, err = s.Execute(PlanEntrySolana, args)
+	if err != nil {
+		s.Logger.Logger.Infof("solana config set keypair err", err)
+		return err
+	}
+	// args := []string{
+	//     "config",
+	//     "set",
+	//     "--keypair",
+	//     keyPairPath,
+	// }
+	// _, err = s.Execute(PlanEntrySolana, args)
+	// if err != nil {
+	//     s.Logger.Logger.Infof("solana config set keypair err", err)
+	//     return err
+	// }
+	return nil
+}
 
 func (r Solana) Execute(command string, args []string) (*bytes.Buffer, error) {
 	buf := &bytes.Buffer{}
