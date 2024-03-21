@@ -54,7 +54,7 @@ name = "BP_DEVNET_ENDPOINT"
 build = true
 default = "https://api.testnet.solana.com"
 description = "Testnet endpoint"
-name = "BP_DEVNET_ENDPOINT"
+name = "BP_TESTNET_ENDPOINT"
 
 [[metadata.configurations]] # Mainnet endpoint
 build = true
@@ -64,7 +64,7 @@ name = "BP_MAINNET_ENDPOINT"
 
 [[metadata.configurations]]
 build = true
-default = "[128,186,144,92,143,34,29,153,205,218,144,239,18,7,193,182,88,33,54,191,6,163,225,222,184,206,40,34,242,169,214,96,108,208,200,224,25,141,34,214,58,107,90,237,255,243,76,144,157,85,109,184,51,247,174,33,95,83,39,137,158,207,238,178]"
+default = "" # wallet keypair value
 description = "wallet keypair"
 name = "BP_WALLET_KEYPAIR"
 
