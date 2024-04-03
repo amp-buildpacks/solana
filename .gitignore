@@ -24,8 +24,6 @@ go.work
 
 # ide
 .idea
-
-# .github
 .github
 !.github/pipeline-descriptor.yml
-!.github/pipeline-version
+!.github/workflows/pb-update-pipeline.yml

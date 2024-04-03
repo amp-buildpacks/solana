@@ -6,6 +6,8 @@ package:
   repositories:   ["ghcr.io/amp-buildpacks/solana"]
   register:       false
   registry_token: ${{ secrets.AMP_BUILDPACKS_BOT_GITHUB_TOKEN }}
+  platforms:
+    os: linux
 
 docker_credentials:
   - registry: ghcr.io

@@ -1,6 +1,6 @@
 module github.com/amp-buildpacks/solana
 
-go 1.21.5
+go 1.21
 
 require (
 	github.com/buildpacks/libcnb v1.30.1
