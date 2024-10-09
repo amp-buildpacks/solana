@@ -3,7 +3,7 @@ module github.com/amp-buildpacks/solana
 go 1.23
 
 require (
-	github.com/buildpacks/libcnb v1.30.3
+	github.com/buildpacks/libcnb v1.30.4
 	github.com/onsi/gomega v1.34.2
 	github.com/paketo-buildpacks/libpak v1.71.0
 	github.com/sclevine/spec v1.4.0
